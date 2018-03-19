@@ -32,7 +32,7 @@ static void rmcrlf(char *s)
         s[--len] = 0;
 }
 
-#define IN_FILE "cities.txt"
+#define IN_FILE "cities5000.txt"
 
 int main(int argc, char **argv)
 {
@@ -49,10 +49,14 @@ int main(int argc, char **argv)
     }
 
     t1 = tvgetf();
-    while ((rtn = fscanf(fp, "%s", word)) != EOF) {
-        char *p = word;
+
+//*********************
+    int count=0 ;
+    char word2[20000][WRDMAX];
+    while ((rtn = fscanf(fp, "%s", word2[count])) != EOF) {
+        char *p = word2[count++];
         /* FIXME: insert reference to each string */
-        if (!tst_ins_del(&root, &p, INS, CPY)) {
+        if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
             fclose(fp);
             return 1;
@@ -60,9 +64,11 @@ int main(int argc, char **argv)
         idx++;
     }
     t2 = tvgetf();
-
+    printf("total city:%d\n",count-1);
     fclose(fp);
     printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2 - t1);
+
+//*********************
 
     for (;;) {
         char *p;
@@ -87,7 +93,7 @@ int main(int argc, char **argv)
             p = word;
             t1 = tvgetf();
             /* FIXME: insert reference to each string */
-            res = tst_ins_del(&root, &p, INS, CPY);
+            res = tst_ins_del(&root, &p, INS, REF);
             t2 = tvgetf();
             if (res) {
                 idx++;
@@ -139,7 +145,7 @@ int main(int argc, char **argv)
             printf("  deleting %s\n", word);
             t1 = tvgetf();
             /* FIXME: remove reference to each string */
-            res = tst_ins_del(&root, &p, DEL, CPY);
+            res = tst_ins_del(&root, &p, DEL, REF);
             t2 = tvgetf();
             if (res)
                 printf("  delete failed.\n");
@@ -149,7 +155,7 @@ int main(int argc, char **argv)
             }
             break;
         case 'q':
-            tst_free_all(root);
+            tst_free(root);
             return 0;
             break;
         default:
