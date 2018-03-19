@@ -43,12 +43,12 @@ test_%: test_%.o $(OBJS_LIB)
 
 test:  $(TESTS)
 	echo 3 | sudo tee /proc/sys/vm/drop_caches;
-	perf stat --repeat 5 \
+	perf stat --repeat 100 \
                 -e cache-misses,cache-references,instructions,cycles \
-                ./test_cpy \n s \n In
-	perf stat --repeat 5 \
+                ./test_ref -a s Tai
+	perf stat --repeat 100 \
                 -e cache-misses,cache-references,instructions,cycles \
-./test_ref s In
+				./test_cpy -a s Tai
 
 clean:
 	$(RM) $(TESTS) $(OBJS)

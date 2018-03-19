@@ -40,8 +40,15 @@ int main(int argc, char **argv)
     char *sgl[LMAX] = {NULL};
     tst_node *root = NULL, *res = NULL;
     int rtn = 0, idx = 0, sidx = 0;
-    FILE *fp = fopen(IN_FILE, "r");
     double t1, t2;
+
+    FILE *fp;
+
+    if(strcmp(argv[1],"-a")==0)
+        fp = fopen("cities5000.txt","r");
+    else
+        fp = fopen(IN_FILE, "r");
+
 
     if (!fp) { /* prompt, open, validate file for reading */
         fprintf(stderr, "error: file open failed '%s'.\n", argv[1]);
@@ -73,7 +80,12 @@ int main(int argc, char **argv)
             " d  delete word from the tree\n"
             " q  quit, freeing all data\n\n"
             "choice: ");
-        fgets(word, sizeof word, stdin);
+
+        if(strcmp(argv[1],"-a")==0)//a for auto
+            strcpy(word, argv[2]);
+        else
+            fgets(word, sizeof word, stdin);
+
         p = NULL;
         switch (*word) {
         case 'a':
@@ -111,7 +123,9 @@ int main(int argc, char **argv)
             break;
         case 's':
             printf("find words matching prefix (at least 1 char): ");
-            if (!fgets(word, sizeof word, stdin)) {
+            if(strcmp(argv[1],"-a")==0)
+                strcpy(word, argv[3]);
+            else if (!fgets(word, sizeof word, stdin)) {
                 fprintf(stderr, "error: insufficient input.\n");
                 break;
             }
@@ -125,6 +139,10 @@ int main(int argc, char **argv)
                     printf("suggest[%d] : %s\n", i, sgl[i]);
             } else
                 printf("  %s - not found\n", word);
+
+            if(strcmp(argv[1],"-a")==0)//a for auto
+                goto quit;
+
             break;
         case 'd':
             printf("enter word to del: ");
@@ -145,6 +163,7 @@ int main(int argc, char **argv)
                 idx--;
             }
             break;
+quit:
         case 'q':
             tst_free_all(root);
             return 0;
