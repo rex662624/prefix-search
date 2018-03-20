@@ -10,7 +10,7 @@ enum { INS, DEL, WRDMAX = 256, STKMAX = 512, LMAX = 1024 };
 #define REF INS
 #define CPY DEL
 
-long poolsize = 20000*WRDMAX;
+long poolsize = 2000000*WRDMAX;
 
 /* timing helper function */
 static double tvgetf(void)
@@ -34,7 +34,7 @@ static void rmcrlf(char *s)
         s[--len] = 0;
 }
 
-#define IN_FILE "cities5000.txt"
+#define IN_FILE "cities.txt"
 
 int main(int argc, char **argv)
 {
@@ -53,9 +53,8 @@ int main(int argc, char **argv)
     t1 = tvgetf();
 //******memorypool*****
     pool = pool_init(poolsize);
-
     while ((rtn = fscanf(fp, "%s",word)) != EOF) {
-        char *p = pool_alloc(pool,sizeof(word));
+        char *p = pool_alloc(pool,strlen(word)+1);
         strcpy(p,word);
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {

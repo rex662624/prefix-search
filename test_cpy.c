@@ -32,7 +32,7 @@ static void rmcrlf(char *s)
         s[--len] = 0;
 }
 
-#define IN_FILE "cities5000.txt"
+#define IN_FILE "cities.txt"
 
 int main(int argc, char **argv)
 {
@@ -43,11 +43,11 @@ int main(int argc, char **argv)
     double t1, t2;
 
     FILE *fp;
-
-    if(argc>1 && strcmp(argv[1],"--bench")==0)
-        fp = fopen("cities5000.txt","r");
-    else
-        fp = fopen(IN_FILE, "r");
+    /*
+        if(argc>1 && strcmp(argv[1],"--bench")==0)
+            fp = fopen("cities.txt","r");
+        else*/
+    fp = fopen(IN_FILE, "r");
 
 
     if (!fp) { /* prompt, open, validate file for reading */
