@@ -4,11 +4,13 @@
 #include <time.h>
 
 #include "tst.h"
-
+#include "memorypool.c"
 /** constants insert, delete, max word(s) & stack nodes */
 enum { INS, DEL, WRDMAX = 256, STKMAX = 512, LMAX = 1024 };
 #define REF INS
 #define CPY DEL
+
+long poolsize = 20000*WRDMAX;
 
 /* timing helper function */
 static double tvgetf(void)
@@ -49,12 +51,13 @@ int main(int argc, char **argv)
     }
 
     t1 = tvgetf();
+//******memorypool*****
+    char *pool = (char *) malloc(poolsize * sizeof(char));
+    char *Top = pool;
 
-//*********************
-    int count=0 ;
-    char word2[20000][WRDMAX];
-    while ((rtn = fscanf(fp, "%s", word2[count])) != EOF) {
-        char *p = word2[count++];
+    while ((rtn = fscanf(fp, "%s",Top)) != EOF) {
+        char *p = Top;
+        // char *p = pool_alloc(pool,sizeof(word));
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
@@ -62,6 +65,7 @@ int main(int argc, char **argv)
             return 1;
         }
         idx++;
+        Top += (strlen(Top) + 1);
     }
     t2 = tvgetf();
     fclose(fp);
@@ -79,9 +83,10 @@ int main(int argc, char **argv)
             " d  delete word from the tree\n"
             " q  quit, freeing all data\n\n"
             "choice: ");
-        printf("\n%d\n %s",argc,argv[1]);
 
-        if(strcmp(argv[1],"--bench")==0)//a for auto
+        printf("\n%d %s\n",argc,argv[1]);
+
+        if(argc>1 && strcmp(argv[1],"--bench")==0)//a for auto
             strcpy(word, argv[2]);
         else
             fgets(word, sizeof word, stdin);
@@ -125,7 +130,7 @@ int main(int argc, char **argv)
         case 's':
             printf("find words matching prefix (at least 1 char): ");
 
-            if(strcmp(argv[1],"--bench")==0)
+            if(argc>1 && strcmp(argv[1],"--bench")==0)
                 strcpy(word, argv[3]);
             else if (!fgets(word, sizeof word, stdin)) {
                 fprintf(stderr, "error: insufficient input.\n");
@@ -142,7 +147,7 @@ int main(int argc, char **argv)
             } else
                 printf("  %s - not found\n", word);
 
-            if(strcmp(argv[1],"--bench")==0)//a for auto
+            if(argc>1 && strcmp(argv[1],"--bench")==0)//a for auto
                 goto quit;
             break;
         case 'd':
@@ -175,6 +180,6 @@ quit:
             break;
         }
     }
-
+    //pool_free(pool);
     return 0;
 }

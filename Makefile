@@ -1,6 +1,4 @@
-TESTS = \
-    test_cpy \
-    test_ref
+TESTS = test_cpy test_ref
 
 TEST_DATA = s Tai
 
@@ -47,10 +45,10 @@ test:  $(TESTS)
 	echo 3 | sudo tee /proc/sys/vm/drop_caches;
 	perf stat --repeat 100 \
                 -e cache-misses,cache-references,instructions,cycles \
-                ./test_ref --bench s Tai
+                ./test_cpy --bench $(TEST_DATA)
 	perf stat --repeat 100 \
                 -e cache-misses,cache-references,instructions,cycles \
-				./test_cpy --bench s Tai
+				./test_ref --bench $(TEST_DATA)
 
 clean:
 	$(RM) $(TESTS) $(OBJS)
