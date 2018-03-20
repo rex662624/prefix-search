@@ -81,7 +81,7 @@ int main(int argc, char **argv)
             "choice: ");
         printf("\n%d\n %s",argc,argv[1]);
 
-        if(strcmp(argv[1],"-a")==0)//a for auto
+        if(strcmp(argv[1],"--bench")==0)//a for auto
             strcpy(word, argv[2]);
         else
             fgets(word, sizeof word, stdin);
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
         case 's':
             printf("find words matching prefix (at least 1 char): ");
 
-            if(strcmp(argv[1],"-a")==0)
+            if(strcmp(argv[1],"--bench")==0)
                 strcpy(word, argv[3]);
             else if (!fgets(word, sizeof word, stdin)) {
                 fprintf(stderr, "error: insufficient input.\n");
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
             } else
                 printf("  %s - not found\n", word);
 
-            if(strcmp(argv[1],"-a")==0)//a for auto
+            if(strcmp(argv[1],"--bench")==0)//a for auto
                 goto quit;
             break;
         case 'd':

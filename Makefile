@@ -2,6 +2,8 @@ TESTS = \
     test_cpy \
     test_ref
 
+TEST_DATA = s Tai
+
 CFLAGS = -Wall -Werror -g
 
 # Control the build verbosity                                                   
@@ -45,10 +47,10 @@ test:  $(TESTS)
 	echo 3 | sudo tee /proc/sys/vm/drop_caches;
 	perf stat --repeat 100 \
                 -e cache-misses,cache-references,instructions,cycles \
-                ./test_ref -a s Tai
+                ./test_ref --bench s Tai
 	perf stat --repeat 100 \
                 -e cache-misses,cache-references,instructions,cycles \
-				./test_cpy -a s Tai
+				./test_cpy --bench s Tai
 
 clean:
 	$(RM) $(TESTS) $(OBJS)
