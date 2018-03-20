@@ -52,12 +52,11 @@ int main(int argc, char **argv)
 
     t1 = tvgetf();
 //******memorypool*****
-    char *pool = (char *) malloc(poolsize * sizeof(char));
-    char *Top = pool;
+    pool = pool_init(poolsize);
 
-    while ((rtn = fscanf(fp, "%s",Top)) != EOF) {
-        char *p = Top;
-        // char *p = pool_alloc(pool,sizeof(word));
+    while ((rtn = fscanf(fp, "%s",word)) != EOF) {
+        char *p = pool_alloc(pool,sizeof(word));
+        strcpy(p,word);
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
@@ -65,7 +64,6 @@ int main(int argc, char **argv)
             return 1;
         }
         idx++;
-        Top += (strlen(Top) + 1);
     }
     t2 = tvgetf();
     fclose(fp);
@@ -83,8 +81,6 @@ int main(int argc, char **argv)
             " d  delete word from the tree\n"
             " q  quit, freeing all data\n\n"
             "choice: ");
-
-        printf("\n%d %s\n",argc,argv[1]);
 
         if(argc>1 && strcmp(argv[1],"--bench")==0)//a for auto
             strcpy(word, argv[2]);
@@ -180,6 +176,6 @@ quit:
             break;
         }
     }
-    //pool_free(pool);
+    pool_free(pool);
     return 0;
 }

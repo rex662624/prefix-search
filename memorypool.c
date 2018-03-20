@@ -3,7 +3,7 @@
 
 #include "memorypool.h"
 
-//static memory_pool *pool = NULL;
+static memory_pool *pool = NULL;
 
 //---------memory pool----------------------
 memory_pool *pool_init(int size)
