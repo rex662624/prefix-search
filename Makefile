@@ -53,5 +53,5 @@ test:  $(TESTS)
 clean:
 	$(RM) $(TESTS) $(OBJS)
 	$(RM) $(deps)
-
+	rm -f  ref.txt cpy.txt caculate
 -include $(deps)

@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     t2 = tvgetf();
 
     fclose(fp);
-    printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2 - t1);
+    printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2-t1);
 //*********************output
 
     FILE *output;
@@ -78,6 +78,7 @@ int main(int argc, char **argv)
         fclose(output);
     } else
         printf("open file error\n");
+
 //***********
     for (;;) {
         char *p;
@@ -99,7 +100,9 @@ int main(int argc, char **argv)
         switch (*word) {
         case 'a':
             printf("enter word to add: ");
-            if (!fgets(word, sizeof word, stdin)) {
+            if(argc>1 && strcmp(argv[1],"--bench")==0)
+                strcpy(word, argv[3]);
+            else if (!fgets(word, sizeof word, stdin)) {
                 fprintf(stderr, "error: insufficient input.\n");
                 break;
             }
@@ -110,10 +113,14 @@ int main(int argc, char **argv)
             t2 = tvgetf();
             if (res) {
                 idx++;
-                printf("  %s - inserted in %.6f sec. (%d words in tree)\n",
+                printf("  %s - inserted in %.12f sec. (%d words in tree)\n",
                        (char *) res, t2 - t1, idx);
             } else
                 printf("  %s - already exists in list.\n", (char *) res);
+
+            if(argc>1 && strcmp(argv[1],"--bench")==0)//a for auto
+                goto quit;
+
             break;
         case 'f':
             printf("find word in tree: ");

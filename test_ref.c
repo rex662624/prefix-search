@@ -4,7 +4,6 @@
 #include <time.h>
 
 #include "tst.h"
-#include "memorypool.c"
 /** constants insert, delete, max word(s) & stack nodes */
 enum { INS, DEL, WRDMAX = 256, STKMAX = 512, LMAX = 1024 };
 #define REF INS
@@ -51,24 +50,22 @@ int main(int argc, char **argv)
     }
     t1 = tvgetf();
 //******memorypool*****
-    pool = pool_init(poolsize);
-    //char *p = pool_alloc(pool,strlen(word)+1);
-    while ((rtn = fscanf(fp, "%s",word)) != EOF) {
-        char *p = pool_alloc(pool,strlen(word)+1);
-        //sprintf(p, "%s",word);
-        strcpy(p,word);
+    char *pool = (char *) malloc(poolsize * sizeof(char));
+    char *Top = pool;
+    while ((rtn = fscanf(fp, "%s",Top)) != EOF) {
+        char *p = Top;
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
             fclose(fp);
             return 1;
         }
-        //p = pool_alloc(pool,strlen(word)+1);
         idx++;
+        Top += (strlen(Top) + 1);
     }
     t2 = tvgetf();
     fclose(fp);
-    printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2 - t1);
+    printf("ternary_tree, loaded %d words in %.6f sec\n", idx,t2-t1);
 //*********************output
     FILE *output;
     output = fopen("ref.txt", "a");
@@ -77,7 +74,6 @@ int main(int argc, char **argv)
         fclose(output);
     } else
         printf("open file error\n");
-
 
 //*********************
 
@@ -101,22 +97,32 @@ int main(int argc, char **argv)
         switch (*word) {
         case 'a':
             printf("enter word to add: ");
-            if (!fgets(word, sizeof word, stdin)) {
+            if(argc>1 && strcmp(argv[1],"--bench")==0)
+                strcpy(Top, argv[3]);
+
+            else if (!fgets(Top, sizeof word, stdin)) {
                 fprintf(stderr, "error: insufficient input.\n");
                 break;
             }
-            rmcrlf(word);
-            p = word;
+            rmcrlf(Top);
+
+            p = Top;
             t1 = tvgetf();
             /* FIXME: insert reference to each string */
             res = tst_ins_del(&root, &p, INS, REF);
             t2 = tvgetf();
             if (res) {
                 idx++;
-                printf("  %s - inserted in %.6f sec. (%d words in tree)\n",
+                Top += (strlen(Top) + 1);
+                printf("  %s - inserted in %.10f sec. (%d words in tree)\n",
                        (char *) res, t2 - t1, idx);
             } else
                 printf("  %s - already exists in list.\n", (char *) res);
+
+            if(argc>1 && strcmp(argv[1],"--bench")==0)//a for auto
+                goto quit;
+
+
             break;
         case 'f':
             printf("find word in tree: ");
@@ -186,6 +192,6 @@ quit:
             break;
         }
     }
-    pool_free(pool);
+    //pool_free(pool);
     return 0;
 }
