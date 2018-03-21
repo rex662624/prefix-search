@@ -49,12 +49,13 @@ int main(int argc, char **argv)
         fprintf(stderr, "error: file open failed '%s'.\n", argv[1]);
         return 1;
     }
-
     t1 = tvgetf();
 //******memorypool*****
     pool = pool_init(poolsize);
+    //char *p = pool_alloc(pool,strlen(word)+1);
     while ((rtn = fscanf(fp, "%s",word)) != EOF) {
         char *p = pool_alloc(pool,strlen(word)+1);
+        //sprintf(p, "%s",word);
         strcpy(p,word);
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {
@@ -62,11 +63,21 @@ int main(int argc, char **argv)
             fclose(fp);
             return 1;
         }
+        //p = pool_alloc(pool,strlen(word)+1);
         idx++;
     }
     t2 = tvgetf();
     fclose(fp);
     printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2 - t1);
+//*********************output
+    FILE *output;
+    output = fopen("ref.txt", "a");
+    if(output!=NULL) {
+        fprintf(output, "%.6f\n",t2-t1);
+        fclose(output);
+    } else
+        printf("open file error\n");
+
 
 //*********************
 
