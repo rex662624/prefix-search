@@ -50,8 +50,13 @@ test:  $(TESTS)
                 -e cache-misses,cache-references,instructions,cycles \
 				./test_ref --bench $(TEST_DATA)
 
+bench: $(TESTS)
+	@for test in $(TESTS); do\
+		./$$test --bench; \
+		done
+
 clean:
 	$(RM) $(TESTS) $(OBJS)
 	$(RM) $(deps)
-	rm -f  ref.txt cpy.txt caculate
+	rm -f  bench_cpy.txt bench_ref.txt ref.txt cpy.txt caculate
 -include $(deps)

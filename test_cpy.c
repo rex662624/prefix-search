@@ -4,13 +4,16 @@
 #include <time.h>
 
 #include "tst.h"
-
+#include "bench.c"
 /** constants insert, delete, max word(s) & stack nodes */
 enum { INS, DEL, WRDMAX = 256, STKMAX = 512, LMAX = 1024 };
 #define REF INS
 #define CPY DEL
 
+#define BENCH_TEST_FILE "bench_cpy.txt"
+
 /* timing helper function */
+/*
 static double tvgetf(void)
 {
     struct timespec ts;
@@ -23,7 +26,7 @@ static double tvgetf(void)
 
     return sec;
 }
-
+*/
 /* simple trim '\n' from end of buffer filled by fgets */
 static void rmcrlf(char *s)
 {
@@ -69,6 +72,14 @@ int main(int argc, char **argv)
 
     fclose(fp);
     printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2-t1);
+//***********************distribution
+
+    if (argc == 2 && strcmp(argv[1], "--bench") == 0) {
+        int stat = bench_test(root, BENCH_TEST_FILE, LMAX);
+        tst_free_all(root);
+        return stat;
+    }
+
 //*********************output
 
     FILE *output;
